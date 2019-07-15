@@ -332,7 +332,7 @@ void Configuration::loadLightStylesheet()
 void Configuration::loadDarkStylesheet()
 {
     /* Load Qt Theme */
-    QFile f(":qdarkstyle/style.qss");
+    QFile f(":qdarkstyle/style.css");
     if (!f.exists()) {
         qWarning() << "Can't find Dark theme stylesheet.";
     } else {
@@ -351,6 +351,25 @@ void Configuration::loadDarkStylesheet()
         QPalette p = qApp->palette();
         p.setColor(QPalette::Text, Qt::white);
         qApp->setPalette(p);
+        qApp->setStyleSheet(stylesheet);
+    }
+}
+
+void Configuration::loadMidnightStylesheet()
+{
+    /* Load Qt Theme */
+    QFile f(":midnight/style.css");
+    if (!f.exists()) {
+        qWarning() << "Can't find Midnight theme stylesheet.";
+    } else {
+        f.open(QFile::ReadOnly | QFile::Text);
+        QTextStream ts(&f);
+        QString stylesheet = ts.readAll();
+
+        QPalette p = qApp->palette();
+        p.setColor(QPalette::Text, Qt::black);
+        qApp->setPalette(p);
+
         qApp->setStyleSheet(stylesheet);
     }
 }
@@ -387,6 +406,8 @@ void Configuration::setInterfaceTheme(int theme)
         loadNativeStylesheet();
     } else if (interfaceTheme.name == "Dark") {
         loadDarkStylesheet();
+    } else if (interfaceTheme.name == "Midnight") {
+        loadMidnightStylesheet();
     } else if (interfaceTheme.name == "Light") {
         loadLightStylesheet();
     } else {
@@ -519,6 +540,7 @@ const QList<CutterInterfaceTheme>& Configuration::cutterInterfaceThemesList()
     static const QList<CutterInterfaceTheme> list = {
         { "Native", Configuration::nativeWindowIsDark() ? DarkFlag : LightFlag },
         { "Dark",   DarkFlag },
+        { "Midnight", MidnightFlag },
         { "Light",  LightFlag }
     };
     return list;
